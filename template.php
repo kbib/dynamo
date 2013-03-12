@@ -86,6 +86,9 @@ function dynamo_preprocess_node(&$variables) {
       $variables['body'] = $node->content['body']['#value'];
     }
   }
+  elseif ($variables['type'] == 'library' && function_exists('opening_hours_theme')) {
+    $variables['opening_hours'] = theme('opening_hours_week', $variables['node']);
+  }
 }
 
 /**
@@ -742,3 +745,34 @@ function dynamo_datef($date, $format, $langcode = 'da') {
   return date_format_date($date, 'custom', $format, $langcode);
 }
 
+/**
+ * Theme ting_details.
+ *
+ * Theme with divs for legacy reasons.
+ */
+function dynamo_ting_details($details) {
+  $groups = array();
+  foreach ($details as $group) {
+    $groups[] = array(
+      'class' => $group['class'],
+      'data' => theme('ting_details_group', $group['title'], $group['data']),
+    );
+  }
+  return theme('item_list', $groups, NULL, 'div');
+}
+
+/**
+ * Theme ting_details_group.
+ *
+ * Theme with divs and spans for legacy reasons.
+ */
+function dynamo_ting_details_group($title, $data) {
+  $items = array();
+  foreach ($data as $item_title => $item) {
+    $items[] = array(
+      'class' => $item['class'],
+      'data' => theme('item_list', $item['data'], $item_title, 'span'),
+    );
+  }
+  return theme('item_list', $items, $title, 'div', array('class' => 'ting-properties'));
+}
